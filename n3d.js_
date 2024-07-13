@@ -1,0 +1,156 @@
+
+
+const xmlns = "http://www.w3.org/2000/svg";
+
+const sqrt3 = Math.sqrt(3);
+
+const points = {
+	A: [-sqrt3 / 4, 1 / 4],
+	B: [sqrt3 / 4, -1 / 4],
+	C: [sqrt3 / 8, - 1 / 4 - 1 / 8],
+	D: [-sqrt3 / 8, -1 / 8],
+	E: [-sqrt3 / 8, -1 / 4 - 1 / 8],
+	F: [-sqrt3 / 4, -1 / 4],
+	G: [0, -1 / 4],
+};
+
+/**
+ * @type SVGSVGElement 
+ */
+let svg = null;
+
+function clean() {
+	if (!svg) svg = document.getElementById('logo');
+	while (svg.firstChild) {
+		svg.removeChild(svg.firstChild);
+	}
+}
+
+function drawPath(pt) {
+	let str = 'M ';
+	for (p of pt) {
+		let [x, y] = points[p];
+		str += ` ${50 + 50 * x} ${50 + 50 * -y}`;
+	}
+	str += ' Z';
+	var path = document.createElementNS(xmlns, "path");
+	path.setAttributeNS(null, 'style', "fill:none;fill-opacity:0.588121;stroke:#ff00c6;stroke: width 0.1em;;stroke-linecap:round");
+	path.setAttributeNS(null, 'd', str);
+	svg.appendChild(path);
+	console.log(path);
+}
+
+function group(a) {
+	if (Array.isArray(a)) return a.map(group);
+	if (typeof a === "string") {
+		if (a.match(/^[a-z0-9_]$/i)) {
+			return a;
+		} else {
+			return `(${a})`;
+		}
+	} else {
+		return a;
+	}
+}
+
+function arrBinOp(a, b, func) {
+	if (Array.isArray(a) && Array.isArray(b)) {
+		return a.map((v, i) => func(v, b[i]));
+	} else if (Array.isArray(a)) {
+		return a.map(v => func(v, b));
+	} else if (Array.isArray(b)) {
+		return b.map(v => func(a, v));
+	} else {
+		return func(a, b);
+	}
+}
+
+function anyBinOp(a, b, func, op) {
+	return arrBinOp(a, b, (a, b) => {
+		if (typeof a === "string" || typeof b === "string") {
+			return `${a} ${op} ${b}`;
+		} else {
+			return func(a, b);
+		}
+	});
+}
+
+function add(a, b) {
+	b = group(b);
+	return anyBinOp(a, b, (a, b) => a + b, '+');
+}
+
+function sub(a, b) {
+	b = group(b);
+	return anyBinOp(a, b, (a, b) => a - b, '-');
+}
+
+function mul(a, b) {
+	return anyBinOp(a, b, (a, b) => a * b, '*');
+}
+
+function div(a, b) {
+	return anyBinOp(a, b, (a, b) => a / b, '/');
+}
+
+function eq(a, b) {
+	b = group(b);
+	return anyBinOp(a, b, (a, b) => `${a} = ${b}`, '=');
+}
+
+function cross(a, b) {
+	return [
+		sub(mul(a[1], b[2]), mul(a[2], b[1])),
+		sub(mul(a[2], b[0]), mul(a[0], b[2])),
+		sub(mul(a[0], b[1]), mul(a[1], b[0])),
+	];
+}
+
+function dot(a, b) {
+	return add(add(mul(a[0], b[0]), mul(a[1], b[1])), mul(a[2], b[2]));
+}
+
+function solve(...args) {
+	let unknowns = args.filter(x => !x.match(/=/));
+	let equations = args.filter(x => x.match(/=/));
+	let text = `solve ${equations.join(', ')} for ${unknowns.join(', ')}`;
+	console.log(text);
+}
+
+function symbolicTransform() {
+	let z0 = 'z0';
+	let z1 = 'z1';
+	let A = [-sqrt3 / 4, 1/4, z0];
+	let B = [sqrt3 / 4, -1/4, z0];
+	let F = [div(mul(-sqrt3 / 4, z1), z0), div(mul(-1 / 4, z1), z0), z1];
+	let Na = cross(sub(A, B), sub(A, F));
+	console.log(sub(A, B), sub(A, F));
+	solve('D', eq('D', dot(Na, A)));
+	//let Da = (-0.125 * x + (-0.21650635094610965 * y) + (-0.45466333698683026 * z))
+	console.log(add(dot(Na, ['x', 'y', 'z']), 'D'));
+}
+
+
+function transform(z0, z1) {
+	let A = [-sqrt3 / 4, 1/4, z0];
+	let B = [sqrt3 / 4, -1/4, z0];
+	let F = [-sqrt3 / 4 * z1 / z0, -1 / 4 * z1 / z0, z1];
+	let Na = cross(sub(A, B), sub(A, F));
+	console.log(Na);
+	//solve('D', eq('D', dot(Na, A)));
+	//let Da = (-0.125 * x + (-0.21650635094610965 * y) + (-0.45466333698683026 * z))
+	//console.log(add(dot(Na, ['x', 'y', 'z']), 'D'));
+}
+
+/*
+		<path style="fill:none;fill-opacity:0.588121;stroke:#ff00c6;stroke: width 0.1em;;stroke-linecap:round"
+			d="M 33.420227,67.052295 105.05707,119.16711 84.175504,131.5824 51.276165,104.95987 51.226317,134.35382 33.337981,124.92054 Z"
+			id="path1" />
+*/
+
+window.onload = function() {
+	clean();
+	drawPath('ABCDEF');
+	drawPath('EDG');
+	transform(5, 5.25);
+}

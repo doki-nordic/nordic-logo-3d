@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<script src="calc.js"></script>
+
+<body style="text-align: center;">
+
+	<p>
+		Coloring:
+			<input onchange="update()" type="radio" name="Lighting" id="lighting-fixed" value="0">&nbsp<label for="lighting-fixed">Fixed</label>
+			<input onchange="update()" type="radio" name="Lighting" id="lighting-dynamic" value="1" checked="1">&nbsp<label for="lighting-dynamic">Light-based</label>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		Perspective:
+		<input onchange="update()" type="radio" name="Perspective" id="perspective-100000" value="100000">
+		<input onchange="update()" type="radio" name="Perspective" id="perspective-10" value="10">
+		<input onchange="update()" type="radio" name="Perspective" id="perspective-6" value="6">
+		<input onchange="update()" type="radio" name="Perspective" id="perspective-4" value="4">
+		<input onchange="update()" type="radio" name="Perspective" id="perspective-3" checked="1" value="3">
+		<input onchange="update()" type="radio" name="Perspective" id="perspective-2" value="2">
+		<input onchange="update()" type="radio" name="Perspective" id="perspective-1_5" value="1.5">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		Depth:
+		<input onchange="update()" type="radio" name="Depth" id="depth-0_1" value="0.1">
+		<input onchange="update()" type="radio" name="Depth" id="depth-0_25" value="0.25">
+		<input onchange="update()" type="radio" name="Depth" id="depth-0_35" value="0.35">
+		<input onchange="update()" type="radio" name="Depth" id="depth-0_48" checked="1" value="0.48">
+		<input onchange="update()" type="radio" name="Depth" id="depth-0_7" value="0.7">
+		<input onchange="update()" type="radio" name="Depth" id="depth-1" value="1">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type="button" value="Home" onclick="home3d()">
+	</p>
+
+
+	<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg" id="logo" style="border: 1px solid #DDD;">
+		<path style="fill:none;fill-opacity:0.588121;stroke:#ff00c6;stroke: width 0.1em;;stroke-linecap:round"
+			d="M 33.420227,67.052295 105.05707,119.16711 84.175504,131.5824 51.276165,104.95987 51.226317,134.35382 33.337981,124.92054 Z"
+			id="path1" />
+	</svg>
+
+</body>
+
+</html>
